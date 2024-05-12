@@ -25,7 +25,7 @@ cloudinary.config({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(helmet());
-app.use(cors());
+app.use(cors({ origin: "https://portfolio-two-delta-33.vercel.app" }));
 // app.use(
 //   limite({
 //     windowMs: 15 * 60 * 1000,
