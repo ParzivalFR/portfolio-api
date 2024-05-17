@@ -17,15 +17,15 @@ dotenv.config();
 connectDB();
 
 cloudinary.config({
-  cloud_name: "dbmjyltpp",
-  api_key: "312544571817957",
-  api_secret: "ocObLlYCm5pjl84zTCMW2btXKBw",
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(helmet());
-app.use(cors({ origin: "https://portfolio-two-delta-33.vercel.app" }));
+app.use(cors());
 // app.use(
 //   limite({
 //     windowMs: 15 * 60 * 1000,
@@ -35,7 +35,7 @@ app.use(cors({ origin: "https://portfolio-two-delta-33.vercel.app" }));
 
 // app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-app.use("/images", express.static(path.join(__dirname, "images")));
+// app.use("/images", express.static(path.join(__dirname, "images")));
 app.use("/api/auth", require("./routes/users.routes"));
 app.use("/api/projects", require("./routes/projects.routes"));
 app.use("/api/category", require("./routes/category.routes"));

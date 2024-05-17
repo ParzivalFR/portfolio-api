@@ -116,7 +116,7 @@ exports.uploadImages = async (req, res, next) => {
 
     const uploadFile = async (file) => {
       const result = await cloudinary.uploader.upload(file.path, {
-        transformation: [{ width: 800, crop: "scale" }, { format: "webp" }],
+        transformation: [{ width: 1440, crop: "scale" }, { format: "webp" }],
       });
       fs.unlink(file.path, (err) => {
         if (err) {

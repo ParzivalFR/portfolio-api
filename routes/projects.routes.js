@@ -10,13 +10,7 @@ router.post("/", auth, uploadImages, projectsCtrl.createProject);
 router.get("/", projectsCtrl.getAllProjects);
 // router.delete("/", auth, projectsCtrl.deleteAllProjects);
 router.get("/:id", projectsCtrl.getOneProject);
-// router.put(
-//   "/:id",
-//   auth,
-//   uploadImage,
-//   optimizeImage,
-//   projectsCtrl.updateProject
-// );
+router.put("/:id", auth, uploadImages, projectsCtrl.updateProject);
 router.delete("/:id", auth, projectsCtrl.deleteProject);
 
 module.exports = router;
