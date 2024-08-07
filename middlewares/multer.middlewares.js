@@ -101,7 +101,7 @@ const upload = multer({ dest: "uploads/" });
 exports.uploadImages = async (req, res, next) => {
   upload.fields([
     { name: "cover", maxCount: 1 },
-    { name: "images", maxCount: 10 }, // Remplacez 10 par le nombre maximum d'images que vous voulez autoriser
+    { name: "images", maxCount: 20 }, // Remplacez 10 par le nombre maximum d'images que vous voulez autoriser
   ])(req, res, async function (err) {
     if (err instanceof multer.MulterError) {
       // A Multer error occurred when uploading.
@@ -116,7 +116,7 @@ exports.uploadImages = async (req, res, next) => {
 
     const uploadFile = async (file) => {
       const result = await cloudinary.uploader.upload(file.path, {
-        transformation: [{ width: 1440, crop: "scale" }, { format: "webp" }],
+        transformation: [{ q_auto: true }, { format: "webp" }],
       });
       fs.unlink(file.path, (err) => {
         if (err) {

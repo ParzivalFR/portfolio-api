@@ -25,7 +25,7 @@ cloudinary.config({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(helmet());
-app.use(cors());
+app.use(cors({ origin: "*" }));
 // app.use(
 //   limite({
 //     windowMs: 15 * 60 * 1000,
@@ -40,5 +40,6 @@ app.use("/api/auth", require("./routes/users.routes"));
 app.use("/api/projects", require("./routes/projects.routes"));
 app.use("/api/category", require("./routes/category.routes"));
 app.use("/api/likes", require("./routes/likes.routes"));
+app.use("/api/contact", require("./routes/contact.routes"));
 
 module.exports = app;

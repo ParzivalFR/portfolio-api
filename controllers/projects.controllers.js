@@ -60,37 +60,83 @@ exports.deleteProject = (req, res) => {
     .catch((error) => res.status(404).json({ error }));
 };
 
-// Modify a project
-exports.updateProject = (req, res) => {
-  Project.findOne({ _id: req.params.id })
-    .then((project) => {
-      // Vérifiez si l'utilisateur qui fait la demande est le créateur du projet
-      if (req.body.userId !== project.userId) {
-        return res.status(403).json({ message: "Accès refusé !" });
-      }
+exports.updateProject = async (req, res) => {
+  try {
+    const project = await Project.findOne({ _id: req.params.id });
 
-      const updateProject = async () => {
-        await Project.updateOne({ _id: req.params.id }, { ...req.body });
-        res.status(200).json({ message: "Project updated!" });
-      };
+    // Vérifiez si l'utilisateur qui fait la demande est le créateur du projet
+    if (req.body.userId !== project.userId) {
+      return res.status(403).json({ message: "Accès refusé !" });
+    }
 
-      if (req.body.cover !== project.cover) {
-        const deleteImage = async (publicId) => {
-          await cloudinary.uploader.destroy(publicId);
-        };
+    const currentCover = project.cover;
+    const currentImages = project.images;
+    const updatedCover = req.body.cover || currentCover;
+    const updatedImages = req.body.images || currentImages;
+    const deletedImages = req.body.deletedImages || [];
 
-        const coverPublicId = project.cover.split("/").pop().split(".")[0];
-        deleteImage(coverPublicId);
+    const deleteImage = async (publicId) => {
+      await cloudinary.uploader.destroy(publicId);
+    };
 
-        project.images.forEach((image) => {
-          const imagePublicId = image.split("/").pop().split(".")[0];
-          deleteImage(imagePublicId);
-        });
+    // Supprimer l'ancienne image de couverture si elle a été changée
+    if (updatedCover !== currentCover && currentCover) {
+      const coverPublicId = currentCover.split("/").pop().split(".")[0];
+      await deleteImage(coverPublicId);
+    }
 
-        updateProject();
-      } else {
-        updateProject();
-      }
-    })
-    .catch((error) => res.status(404).json({ error }));
+    // Supprimer les images indiquées pour suppression
+    for (const image of deletedImages) {
+      const imagePublicId = image.split("/").pop().split(".")[0];
+      await deleteImage(imagePublicId);
+    }
+
+    // Mettre à jour le projet avec les nouvelles données
+    const updatedProject = {
+      ...req.body,
+      cover: updatedCover,
+      images: updatedImages.filter((image) => !deletedImages.includes(image)),
+    };
+
+    await Project.updateOne({ _id: req.params.id }, updatedProject);
+
+    res.status(200).json({ message: "Projet mis à jour !" });
+  } catch (error) {
+    res.status(404).json({ error });
+  }
 };
+
+// // Modify a project
+// exports.updateProject = (req, res) => {
+//   Project.findOne({ _id: req.params.id })
+//     .then((project) => {
+//       // Vérifiez si l'utilisateur qui fait la demande est le créateur du projet
+//       if (req.body.userId !== project.userId) {
+//         return res.status(403).json({ message: "Accès refusé !" });
+//       }
+
+//       const updateProject = async () => {
+//         await Project.updateOne({ _id: req.params.id }, { ...req.body });
+//         res.status(200).json({ message: "Project updated!" });
+//       };
+
+//       if (req.body.cover !== project.cover) {
+//         const deleteImage = async (publicId) => {
+//           await cloudinary.uploader.destroy(publicId);
+//         };
+
+//         const coverPublicId = project.cover.split("/").pop().split(".")[0];
+//         deleteImage(coverPublicId);
+
+//         project.images.forEach((image) => {
+//           const imagePublicId = image.split("/").pop().split(".")[0];
+//           deleteImage(imagePublicId);
+//         });
+
+//         updateProject();
+//       } else {
+//         updateProject();
+//       }
+//     })
+//     .catch((error) => res.status(404).json({ error }));
+// };
