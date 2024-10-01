@@ -57,12 +57,13 @@
 
 const app = require("../app");
 
-// Gardez vos fonctions utilitaires comme normalizePort si vous le souhaitez
-
 const port = process.env.PORT || 3000;
 
-app.listen(port, () => {
-  console.log(`🚀 Server ready on port ${port}`);
+// Ajoutez une route de test simple
+app.get("/api/test", (req, res) => {
+  res.json({ message: "Test route working!" });
 });
 
+// Pour Vercel, nous n'avons pas besoin d'écouter explicitement le port
+// L'exportation de l'app est suffisante
 module.exports = app;
