@@ -55,49 +55,14 @@
 
 // server.listen(port);
 
-const app = require("./app");
+const app = require("../app");
 
-const normalizePort = (val) => {
-  const port = parseInt(val, 10);
+// Gardez vos fonctions utilitaires comme normalizePort si vous le souhaitez
 
-  if (isNaN(port)) {
-    return val;
-  }
+const port = process.env.PORT || 3000;
 
-  if (port >= 0) {
-    return port;
-  }
+app.listen(port, () => {
+  console.log(`🚀 Server ready on port ${port}`);
+});
 
-  return false;
-};
-
-const port = normalizePort(process.env.PORT || "3005");
-app.set("port", port);
-
-const errorHandler = (error) => {
-  if (error.syscall !== "listen") {
-    throw error;
-  }
-
-  const bind = typeof port === "string" ? `Pipe ${port}` : `Port ${port}`;
-
-  switch (error.code) {
-    case "EACCES":
-      console.error(`${bind} requires elevated privileges.`);
-      process.exit(1);
-      break;
-    case "EADDRINUSE":
-      console.error(`${bind} is already in use.`);
-      process.exit(1);
-      break;
-    default:
-      throw error;
-  }
-};
-
-app
-  .listen(port, () => {
-    console.log(`🚀 Server running on port ${port}`);
-    console.log(`🚀 Documentation on http://localhost:${port}/api-docs...`);
-  })
-  .on("error", errorHandler);
+module.exports = app;
