@@ -35,7 +35,6 @@ app.use(cors({ origin: "*" }));
 
 // app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-// app.use("/images", express.static(path.join(__dirname, "images")));
 app.use("/api/auth", require("./routes/users.routes"));
 app.use("/api/projects", require("./routes/projects.routes"));
 app.use("/api/category", require("./routes/category.routes"));
